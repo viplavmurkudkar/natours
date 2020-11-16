@@ -24,7 +24,7 @@ class APIFeatures {
 
   sort() {
     if (this.queryString.sort) {
-      console.log(this.queryString.sort);
+      // console.log(this.queryString.sort);
       const sortBy = this.queryString.sort.split(',').join(' '); // replace , by ' '
       this.query = this.query.sort(sortBy);
       // sort('price ratingsAverage') if price is same then sort by 2nd field(ratingsAvg)

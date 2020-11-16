@@ -183,10 +183,10 @@ tourSchema.pre(/^find/, function(next) {
   next();
 });
 
-tourSchema.post(/^find/, function(docs, next) {
-  console.log(`Query took ${Date.now() - this.start} milliseconds`);
-  next();
-}); //we get access to all the docs that were returned by the query in post middleware
+// tourSchema.post(/^find/, function(docs, next) {
+//   console.log(`Query took ${Date.now() - this.start} milliseconds`);
+//   next();
+// }); //we get access to all the docs that were returned by the query in post middleware
 
 // AGGREGATION MIDDLEWARE
 

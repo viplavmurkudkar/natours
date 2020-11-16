@@ -7,6 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const compression = require('compression'); //to compress all the resps(html or json) that we send to client
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -74,6 +75,8 @@ app.use(
 //   console.log('Hello from the middleware');
 //   next(); // if we dont call next() here then the req resp cycle would be stuck here and we couldnt send back a resp to the client.
 // }); // creating our own middleware. This middleware applies to each request since we didnt specify route here.
+
+app.use(compression());
 
 // Test middleware
 app.use((req, res, next) => {

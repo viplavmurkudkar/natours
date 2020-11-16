@@ -93,7 +93,7 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
       10
     ); //.getTime() gives us the time in ms while JWTTimestamp is in secs. so we divide by 1000 to convert it to seconds
 
-    console.log(changedTimestamp, JWTTimestamp);
+    // console.log(changedTimestamp, JWTTimestamp);
     return JWTTimestamp < changedTimestamp; // the day or time the token was issued should be greater than the changedTimestamp. say the token was issued at time 100. but then we changed the password at time 200. so we changed passwd after token was issued and thus 100<200 is now true. so we return true. true means changed
   }
 
@@ -109,7 +109,7 @@ userSchema.methods.createPasswordResetToken = function() {
     .update(resetToken)
     .digest('hex');
 
-  console.log({ resetToken }, this.passwordResetToken);
+  // console.log({ resetToken }, this.passwordResetToken);
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
