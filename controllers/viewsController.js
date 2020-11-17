@@ -94,10 +94,16 @@ exports.getMyTours = catchAsync(async (req, res, next) => {
   const tourIds = bookings.map(booking => booking.tour);
   const tours = await Tour.find({ _id: { $in: tourIds } }); // $in selects all the tours which have an ID that is present in the tourIds array
 
-  res.status(200).render('overview', {
-    title: 'My Tours',
-    tours
-  });
+  res
+    .status(200)
+    .set(
+      'Content-Security-Policy',
+      "default-src 'self' https://*.mapbox.com https://*.stripe.com ;base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src https://cdnjs.cloudflare.com https://api.mapbox.com https://js.stripe.com 'self' blob: ;script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests;"
+    )
+    .render('overview', {
+      title: 'My Tours',
+      tours
+    });
 }); //the process of getting bookings and tours can also be done by using virtual populate when getting the bookings
 
 exports.updateUserData = catchAsync(async (req, res, next) => {
