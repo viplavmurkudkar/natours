@@ -16,7 +16,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     // success_url: `${req.protocol}://${req.get('host')}/my-tours/?tour=${
     //   req.params.tourID
     // }&user=${req.user.id}&price=${tour.price}`, //url that is called as soon as card is successfully charged
-    success_url: `${req.protocol}://${req.get('host')}/my-tours`,
+    success_url: `${req.protocol}://${req.get('host')}/my-tours?alert=booking`,
     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`, //url where user is redirected if he cancels his current payment
     customer_email: req.user.email,
     client_reference_id: req.params.tourID, //allows us to pass in data abt session we are creating. Once the purchase completes we get access to session obj again. By then we want to create new booking in our db. to do this we need tourID, userId(already have email) and price.
