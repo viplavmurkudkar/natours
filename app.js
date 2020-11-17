@@ -20,6 +20,8 @@ const viewRouter = require('./routes/viewRoutes');
 // Start express app
 const app = express();
 
+app.enable('trust proxy'); //to trust proxys (for secure option in authController.createSendToken)
+
 //PUG engine setup
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views')); // describe loc of our views folder

@@ -12,19 +12,19 @@ const signToken = id => {
   });
 };
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
 
-  const cookieOptions = {
+  // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  // if (req.secure || req.headers['x-forwarded-proto'] === 'https') cookieOptions.secure = true;//cookie will only be sent on secure connections (HTTPS). The second condition is only for Heroku
+
+  res.cookie('jwt', token, {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ), //browser/client will delete cookie after it has expired
-    httpOnly: true //cookie cannot be accessed or modified in any way by the browser(xss attacks). not even delete it
-  };
-
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true; //cookie will only be sent on secure connections (HTTPS)
-
-  res.cookie('jwt', token, cookieOptions);
+    httpOnly: true, //cookie cannot be accessed or modified in any way by the browser(xss attacks). not even delete it
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https' //in express we have a secure prop on req that is set to true when the conn is secure. In heroku this won't work because heroku acts as a proxy and redirects/modifies all incoming reqs. To make it work on heroku we test 2nd condition
+  });
 
   // Remove password from output
   user.password = undefined;
@@ -50,7 +50,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   // console.log(url);
   await new Email(newUser, url).sendWelcome();
 
-  createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201, req, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -70,7 +70,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   // 3) If everything is ok, send token to client
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 exports.logout = (req, res) => {
@@ -227,7 +227,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // 3) Update the passwordChangedAt property for the user(done in userModel)
 
   // 4) Log the user in, send JWT
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -246,5 +246,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   //User.findByIdAndUpdate() will not work as intended because our custom validator(on passwordConfirm) and our pre save middlewares wont work
 
   // 4) Log user in, send JWT
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });

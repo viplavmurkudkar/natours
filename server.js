@@ -38,3 +38,10 @@ process.on('unhandledRejection', err => {
     process.exit(1); // to shut down app. 0 stands for success, 1 for uncaught exceptions
   });
 }); // any promise rejection that we might not have caught in our app will be handled here. final safety net
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM RECIEVED. Shutting down gracefully');
+  server.close(() => {
+    console.log('Process terminated.');
+  }); // we dont need to call process.exit() here because SIGTERM itself causes app to shut down
+}); // SIGTERM is emitted by Heroku. heroku dynos restart every 24 hours to keep our app in healthy state. This is done by sending the SIGTERM signal. we set up this listener to allow server to shutdown gracefully. if we dont do this sigterm will cause abrupt shutdown and any pending reqs are not executed
