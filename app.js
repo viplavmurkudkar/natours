@@ -17,6 +17,7 @@ const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
 const viewRouter = require('./routes/viewRoutes');
+const bookingController = require('./controllers/bookingController');
 
 // Start express app
 const app = express();
@@ -61,7 +62,13 @@ const limiter = rateLimit({
 }); // in the above object we defined that we want max of 100 reqs from one single IP in a hr. If that limit is crossed by an IP theyll get back an error.
 app.use('/api', limiter);
 
-// Body parser, reading data from body into req.body
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+); //we put this route here because we need the body of the req to be raw(the stripe funcn we use in webhookCheckout requires that). so we the route b4 the body parser.
+
+// Body parser, reading data from body into req.body. also converts body to json
 app.use(express.json({ limit: '10kb' })); // This middleware reads the data from the request body into req.body limit: limits body size to 10kb
 app.use(express.urlencoded({ extended: true, limit: '10kb' })); // for parsing data coming from a form(updating user data without using our api)
 app.use(cookieParser());
