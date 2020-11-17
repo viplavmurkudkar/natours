@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression'); //to compress all the resps(html or json) that we send to client
+const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -27,6 +28,18 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views')); // describe loc of our views folder
 
 // 1) GLOBAL MIDDLEWARES (function that can modify the incoming request data)
+
+//Implement CORS
+app.use(cors()); //Sets Access-Control-Allow-Origin header to *. will only work for simple reqs(get and post)
+// api.natours.com (Api url) while front end is natours.com to then allow natours.com to access api.natours.com we do
+// app.use(
+//   cors({
+//     origin: 'https://www.natours.com'
+//   })
+// );
+
+app.options('*', cors()); //options is another http method like get, post
+// app.options('/api/v1/tours/:id', cors());
 
 // Serving static files
 // app.use(express.static(`${__dirname}/public`));
